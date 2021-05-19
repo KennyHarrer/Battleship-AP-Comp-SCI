@@ -27,6 +27,15 @@ import my.battleship.ShotStatus;
  * this TemplatePlayer class.
  * 
  */
+
+enum Mode{
+    DISCOVERY,
+    CHECKERBOARD,
+    RANDOMRESOLVE,
+    HUNT,
+    PUNISHMENT,
+}
+
 public class TemplatePlayer implements Player {
 
     final static String myName = "Kenneth, Harrer";  // TODO: Enter your name as a string
@@ -37,6 +46,9 @@ public class TemplatePlayer implements Player {
      * You can perform pre-game setup and initialization here if you want to.
      */
     public TemplatePlayer() {
+
+        Mode mode = Mode.DISCOVERY;
+
     }
 
     
@@ -63,8 +75,12 @@ public class TemplatePlayer implements Player {
          */
         for(int row = 0; row < platform.getNumberOfRows(); row++) {
             for (int col = 0; col < platform.getNumberOfCols(); col++) {
-        	ShotReply shotReply = platform.shoot(row, col);
-        	ShotStatus status = shotReply.getStatus();
+
+                ShotReply shotReply = platform.shoot(row, col); //This is where we shoot
+
+                //DO NOT TOUCH PAST
+
+                ShotStatus status = shotReply.getStatus();
 
                 switch (status) {
                 case HIT:
