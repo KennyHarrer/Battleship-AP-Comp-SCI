@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","u":"allclasses-index.html"},{"p":"my.battleship","l":"Platform"},{"p":"my.battleship","l":"Player"},{"p":"my.battleship","l":"Ship"},{"p":"my.battleship","l":"ShotReply"},{"p":"my.battleship","l":"ShotStatus"},{"p":"student.player","l":"TemplatePlayer"}];updateSearchResults();
