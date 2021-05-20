@@ -21,33 +21,38 @@ import my.battleship.ShotReply;
 import my.battleship.PlatformImpl;
 import my.battleship.ShotStatus;
 
-/**
- * Example solution that can be modified as needed. 
- * The main method will invoke the platform to play the game with an instance of 
- * this TemplatePlayer class.
- * 
- */
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 enum Mode{
-    DISCOVERY,
-    CHECKERBOARD,
-    RANDOMRESOLVE,
-    HUNT,
-    PUNISHMENT,
+    SCOREMAP,
+    PATTERN
+}
+
+enum coordinateState {
+    NORMAL, //no move has been made at this position
+    MISS, //we shot here, but there was nothing here
+    HIT, //we shot here and there was a ship here but we haven't fully sunk the ship yet.
+    SUNK //get owned, get destroyed, literally completely annihilated you fool
 }
 
 public class TemplatePlayer implements Player {
 
-    final static String myName = "Kenneth, Harrer";  // TODO: Enter your name as a string
-                                    // e.g final static String myName = "lastname, firstname";
+    final static String myName = "Kenneth, Harrer";
 
     /**
      * A new instance of this class is created for each board.
      * You can perform pre-game setup and initialization here if you want to.
      */
+
+    Mode mode;
+    Dictionary<Coordinate,coordinateState> currentBoard;
+    Coordinate lastShot;
+
     public TemplatePlayer() {
 
-        Mode mode = Mode.DISCOVERY;
+        this.mode = Mode.SCOREMAP;
+        this.currentBoard = new Hashtable<Coordinate,coordinateState>();
 
     }
 
@@ -61,62 +66,66 @@ public class TemplatePlayer implements Player {
      * @see Platform
      */
     public void startGame(Platform platform) {
-        
-        /*************************************************************************
-         * TODO:
-         * 
-         * YOU SHOULD REPLACE THE CODE IN THIS METHOD WITH YOUR OWN SOLUTION.
-         * 
-         *************************************************************************/
-    	
-        /*
-         * This is an example algorithm that shoots from top left to bottom right.
-         * This is not a great solution, you should make it better!
-         */
+
+
         for(int row = 0; row < platform.getNumberOfRows(); row++) {
             for (int col = 0; col < platform.getNumberOfCols(); col++) {
-
-                ShotReply shotReply = platform.shoot(row, col); //This is where we shoot
-
-                //DO NOT TOUCH PAST
-
-                ShotStatus status = shotReply.getStatus();
-
-                switch (status) {
-                case HIT:
-                    break;
-                case SUNK_SHIP:
-                	/* Get information about the ship just sunk and print its name */
-                	System.out.println("You sunk my " + 
-                            platform.listSunkShips().get(0).getName()
-                            );
-                    break;
-                case MISS:
-                    break;
-                case SUNK_ALL_YOU_WIN:
-                	/* Get information about the ship just sunk and print its name */
-                	System.out.println("You won by sinking  my " + 
-                            platform.listSunkShips().get(0).getName()
-                            );
-                	return;
-                
-                case SHOT_AFTER_GAME_OVER:
-                case MISSED_BOARD:
-                	// if you shoot after the game or miss the board, your program has a bug in it
-                    return; 
-                 default:
-                    break;
-                }
+                currentBoard.put(new Coordinate(row,col),coordinateState.NORMAL);
 
             }
         }
+
+
+        boolean playing = true;
+
+        while(playing) {
+            // //This is where we shoot
+            //
+
+            ScoreMap CurrentScoreMap = new ScoreMap(platform,currentBoard);
+            Coordinate nextShot = CurrentScoreMap.getBestShot();
+
+            ShotReply shotReply = platform.shoot(nextShot.x, nextShot.y);
+
+            ShotStatus status = shotReply.getStatus();
+
+            switch (status) {
+                case HIT:
+                    currentBoard.put(nextShot,coordinateState.HIT);
+                    break;
+                case SUNK_SHIP:
+                    System.out.println("You sunk my " +
+                            platform.listSunkShips().get(0).getName()
+                    );
+                    currentBoard.put(nextShot,coordinateState.SUNK); //oh shoot we have to find the rest of the sunk coords
+                    break;
+                case MISS:
+                    currentBoard.put(nextShot,coordinateState.MISS);
+                    break;
+                case SUNK_ALL_YOU_WIN:
+                    System.out.println("You won by sinking  my " +
+                            platform.listSunkShips().get(0).getName()
+                    );
+                    playing = false;
+                    break;
+                case SHOT_AFTER_GAME_OVER:
+                case MISSED_BOARD:
+                    return;
+                default:
+                    break;
+            }
+
+            lastShot = nextShot;
+
+        }
+
     }
 
     @Override
     /**
      * Returns the name of the player to be shown on the screen
      */
-    public String getScreenName() {
+    public String getScreenName() { //Dear creators: What the heck
         return myName;  
     }
 
@@ -125,7 +134,7 @@ public class TemplatePlayer implements Player {
      * Returns the real name of the player, which may be different
      * than the screen name.
      */
-    public String getRealName() {
+    public String getRealName() {  //Dear creators: What the heck part 2
         return myName;
     }
 
@@ -141,7 +150,7 @@ public class TemplatePlayer implements Player {
      * 
      */
     public String getSchool() {
-        return null;
+        return "Mayo";
     }
 
     /**
@@ -170,17 +179,17 @@ public class TemplatePlayer implements Player {
 
         // This quick start version lets you run against a single board without having
         // to select it using a file prompt each time
-        /*
+
          PlatformImpl.onePlayerQuickStart(
                 // The name of the battleship game board properties you want to use.  
                 // TODO Change as desired. This board has fixed locations for the ships.
-                "sampleBoards/Classic-1.properties",
+                "sampleBoards/Classic-Random.properties",
                 // The Class object representing your player class (this class). The battleship
                 // game uses this to plug your code into the game.
                 TemplatePlayer.class,
                 // true to show the GUI. This optimizes the GUI so you can observe the play of your Player implementation.
                 true);
-        */
+
         
     }
 
