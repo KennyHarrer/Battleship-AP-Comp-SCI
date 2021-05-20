@@ -3,9 +3,7 @@ package student.player;
 import my.battleship.Platform;
 import my.battleship.Ship;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 public class ScoreMap {
 
@@ -13,7 +11,7 @@ public class ScoreMap {
     Platform platform;
     Dictionary<Coordinate,coordinateState> currentBoard;
 
-    public ScoreMap(Platform platform, Dictionary<Coordinate,coordinateState> currentBoard) {
+    public ScoreMap(Platform platform, Dictionary<Coordinate,coordinateState> currentBoard, List<Ship> shipsLeft) {
         this.platform = platform;
         this.currentBoard = currentBoard;
 
@@ -28,8 +26,7 @@ public class ScoreMap {
 
                 if(currentState == coordinateState.NORMAL){ //Normal Scoring Method
 
-                    List<Ship> shipsLeft = platform.listShips();
-
+                    System.out.println("ships : "+shipsLeft.size());
                     for (int ship=0;ship<shipsLeft.size();ship++) {
 
                         int currentShipLength = shipsLeft.get(ship).getLength();
@@ -115,7 +112,7 @@ public class ScoreMap {
             }
         }
     }
-
+    /*
     public ScoreMap analyze() {
 
         for(int x = 0; x < platform.getNumberOfRows(); x++) { //row
@@ -169,11 +166,12 @@ public class ScoreMap {
 
                 List<Ship> shipsLeft = platform.listShips();
 
+
                 for (int ship=0;ship<shipsLeft.size();ship++) {
 
                     int currentShipLength = shipsLeft.get(ship).getLength();
 
-                    for (int shipLength = 1;shipLength<currentShipLength;shipLength++) {
+                    for (int shipLength = 0;shipLength<currentShipLength;shipLength++) {
                         for (int direction= 0; direction<4; direction++) {
 
                             Coordinate possibleShipPosition = currentCoordinate.offsetInDirection(direction,shipLength);
@@ -194,7 +192,7 @@ public class ScoreMap {
 
         return this;
 
-    }
+    }*/
 
     public Coordinate getBestShot(){
         int currentBest = 0;
@@ -211,6 +209,7 @@ public class ScoreMap {
                 }
             }
         }
+
         System.out.println("Best score: "+currentBest+"\nBest Score At: "+bestCoord.x+" "+bestCoord.y);
         return bestCoord;
     }

@@ -15,14 +15,12 @@
 // If you create any additional classes to help you, ensure they are in this package
 package student.player;
 
-import my.battleship.Platform;
-import my.battleship.Player;
-import my.battleship.ShotReply;
-import my.battleship.PlatformImpl;
-import my.battleship.ShotStatus;
+import my.battleship.*;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 enum Mode{
     SCOREMAP,
@@ -48,6 +46,7 @@ public class TemplatePlayer implements Player {
     Mode mode;
     Dictionary<Coordinate,coordinateState> currentBoard;
     Coordinate lastShot;
+    List<Ship> shipsLeft;
 
     public TemplatePlayer() {
 
@@ -75,6 +74,7 @@ public class TemplatePlayer implements Player {
             }
         }
 
+        this.shipsLeft = platform.listShips();
 
         boolean playing = true;
 
@@ -82,7 +82,7 @@ public class TemplatePlayer implements Player {
             // //This is where we shoot
             //
 
-            ScoreMap CurrentScoreMap = new ScoreMap(platform,currentBoard);
+            ScoreMap CurrentScoreMap = new ScoreMap(platform,currentBoard,shipsLeft);
             Coordinate nextShot = CurrentScoreMap.getBestShot();
 
             ShotReply shotReply = platform.shoot(nextShot.x, nextShot.y);
@@ -97,6 +97,11 @@ public class TemplatePlayer implements Player {
                     System.out.println("You sunk my " +
                             platform.listSunkShips().get(0).getName()
                     );
+                    for(int i=0;i<shipsLeft.size();i++){
+                        if(platform.listSunkShips().get(0).getName().equals(shipsLeft.get(i).getName())){
+                            shipsLeft.remove(i);
+                        }
+                    }
                     currentBoard.put(nextShot,coordinateState.SUNK); //oh shoot we have to find the rest of the sunk coords
                     break;
                 case MISS:
