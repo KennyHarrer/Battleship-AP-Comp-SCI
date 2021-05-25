@@ -3,6 +3,7 @@ package student.player;
 import my.battleship.Platform;
 import my.battleship.Ship;
 
+import java.sql.Array;
 import java.util.*;
 
 public class ScoreMap {
@@ -26,7 +27,6 @@ public class ScoreMap {
 
                 if(currentState == coordinateState.NORMAL){ //Normal Scoring Method
 
-                    System.out.println("ships : "+shipsLeft.size());
                     for (int ship=0;ship<shipsLeft.size();ship++) {
 
                         int currentShipLength = shipsLeft.get(ship).getLength();
@@ -65,7 +65,7 @@ public class ScoreMap {
 
                         if(ShipDirection!=-1){
 
-                            for(int i=1;i<6;i++) {
+                            for(int i=1;i<5;i++) {
 
                                 Coordinate directionCoordinate = currentCoordinate.offsetInDirection(ShipDirection, i);
                                 if (directionCoordinate.getX() < 0 || directionCoordinate.getY() < 0 || directionCoordinate.getX() > platform.getNumberOfRows() || directionCoordinate.getY() > platform.getNumberOfCols())
@@ -75,11 +75,12 @@ public class ScoreMap {
                                     break;
                                 }
                                 if (currentBoard.get(directionCoordinate) == coordinateState.NORMAL) {
-                                    scores.put(directionCoordinate, 100);
+                                    scores.put(directionCoordinate, 150);
+                                    break;
                                 }
                             }
 
-                            for(int i=-1;i>-6;i--) {
+                            for(int i=-1;i>-5;i--) {
 
                                 Coordinate directionCoordinate = currentCoordinate.offsetInDirection(ShipDirection, i);
                                 if (directionCoordinate.getX() < 0 || directionCoordinate.getY() < 0 || directionCoordinate.getX() > platform.getNumberOfRows() || directionCoordinate.getY() > platform.getNumberOfCols())
@@ -89,11 +90,13 @@ public class ScoreMap {
                                     break;
                                 }
                                 if (currentBoard.get(directionCoordinate) == coordinateState.NORMAL) {
-                                    scores.put(directionCoordinate, 100);
+                                    scores.put(directionCoordinate, 150);
+                                    break;
                                 }
                             }
 
                         }else{
+
                             for(int direction=0;direction<4;direction++){
 
                                 Coordinate directionCoordinate = currentCoordinate.offsetInDirection(direction, 1);
@@ -104,6 +107,7 @@ public class ScoreMap {
                                     scores.put(directionCoordinate,100);
                                 }
                             }
+
                         }
 
                     }
@@ -112,87 +116,6 @@ public class ScoreMap {
             }
         }
     }
-    /*
-    public ScoreMap analyze() {
-
-        for(int x = 0; x < platform.getNumberOfRows(); x++) { //row
-            for (int y = 0; y < platform.getNumberOfCols(); y++) { //column
-
-                Coordinate currentCoordinate = new Coordinate(x,y);
-                coordinateState currentCoordinateState = currentBoard.get(currentCoordinate);
-                //System.out.println("out: "+currentBoard.get(currentCoordinate));
-                if(currentCoordinateState != coordinateState.NORMAL) {
-
-                    if(currentCoordinateState == coordinateState.HIT){
-
-                        Direction ShipDirection = null;
-
-                        for(int direction=0;direction<4;direction++){
-
-                            Coordinate directionCoordinate = currentCoordinate.offsetInDirection(direction, 1);
-
-                            if(currentBoard.get(directionCoordinate) == coordinateState.HIT){
-                                ShipDirection = new Direction().determineDirection(currentCoordinate,directionCoordinate);
-                                break;
-                            }
-                        }
-
-                        // TODO: DONT DO RANDOM USE SUNK SHIP LENGTHS TO FIND THE MOST OPTIMAL DIRECTION
-                        if(ShipDirection != null){
-                            //TODO: Actually find the next shooting pos
-                            scores.put(currentCoordinate, 0);
-                            continue;
-                        }else{
-                            for(int direction=0;direction<4;direction++){//We have no idea which direction this ship is going so were going to shoot around the hit until we find the right direction
-                                Coordinate directionCoordinate = currentCoordinate.offsetInDirection(direction, 1);
-                                System.out.println(directionCoordinate.x + " " + directionCoordinate.y);
-                                if(currentBoard.get(directionCoordinate)==coordinateState.NORMAL){
-                                    scores.put(directionCoordinate, 100);
-                                    System.out.println("100 at "+directionCoordinate.x+" "+directionCoordinate.y+" direction number"+direction);
-                                    break;
-                                }
-                            }
-
-
-                        }
-                    }else{
-                        scores.put(currentCoordinate, 0);
-                        continue ; //No ship can be on this tile, therefore it cannot be a ship, therefore its value is 0.
-                    }
-
-                }
-
-                int currentCoordinateScore = 0;
-
-                List<Ship> shipsLeft = platform.listShips();
-
-
-                for (int ship=0;ship<shipsLeft.size();ship++) {
-
-                    int currentShipLength = shipsLeft.get(ship).getLength();
-
-                    for (int shipLength = 0;shipLength<currentShipLength;shipLength++) {
-                        for (int direction= 0; direction<4; direction++) {
-
-                            Coordinate possibleShipPosition = currentCoordinate.offsetInDirection(direction,shipLength);
-                            if (possibleShipPosition.getX() < 0 || possibleShipPosition.getY() < 0 || possibleShipPosition.getX() > platform.getNumberOfRows() || possibleShipPosition.getY() > platform.getNumberOfCols()) { continue; } //keep scores in bounds
-
-                            if(currentBoard.get(possibleShipPosition) == coordinateState.NORMAL){
-                                currentCoordinateScore++;
-                            }
-
-                        }
-                    }
-                }
-
-                scores.put(new Coordinate(x,y), currentCoordinateScore);
-
-            }
-        }
-
-        return this;
-
-    }*/
 
     public Coordinate getBestShot(){
         int currentBest = 0;

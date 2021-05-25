@@ -17,7 +17,6 @@ package student.player;
 
 import my.battleship.*;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
