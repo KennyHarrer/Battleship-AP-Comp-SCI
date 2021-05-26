@@ -54,13 +54,13 @@ public class TemplatePlayer implements Player {
 
     }
 
-    
-    
+
+
     @Override
     /**
      * This method plays the game.
      * Methods can be called using the platform to shoot and retrieve the results of the shot.
-     * 
+     *
      * @see Platform
      */
     public void startGame(Platform platform) {
@@ -78,8 +78,6 @@ public class TemplatePlayer implements Player {
         boolean playing = true;
 
         while(playing) {
-            // //This is where we shoot
-            //
 
             ScoreMap CurrentScoreMap = new ScoreMap(platform,currentBoard,shipsLeft);
             Coordinate nextShot = CurrentScoreMap.getBestShot();
@@ -101,7 +99,24 @@ public class TemplatePlayer implements Player {
                             shipsLeft.remove(i);
                         }
                     }
-                    currentBoard.put(nextShot,coordinateState.SUNK); //oh shoot we have to find the rest of the sunk coords
+
+                    for(int dir=0;dir<4;dir++){
+                        boolean isDir = true;
+                        for(int shipLength=0;shipLength<platform.listSunkShips().get(0).getLength();shipLength++){
+                            Coordinate isSunkDir = nextShot.offsetInDirection(dir,shipLength);
+                            if(currentBoard.get(isSunkDir) != coordinateState.HIT){
+                                isDir = false;
+                                break;
+                            }
+                        }
+                        if(isDir){
+                            for(int shipLength=0;shipLength<platform.listSunkShips().get(0).getLength();shipLength++){
+                                Coordinate thing = nextShot.offsetInDirection(dir,shipLength);
+                                currentBoard.put(thing,coordinateState.SUNK);
+                            }
+                        }
+                    }
+                    currentBoard.put(nextShot,coordinateState.SUNK);
                     break;
                 case MISS:
                     currentBoard.put(nextShot,coordinateState.MISS);
@@ -130,7 +145,7 @@ public class TemplatePlayer implements Player {
      * Returns the name of the player to be shown on the screen
      */
     public String getScreenName() { //Dear creators: What the heck
-        return myName;  
+        return myName;
     }
 
     @Override
@@ -146,33 +161,33 @@ public class TemplatePlayer implements Player {
     /**
      * Returns the name of the player's school, or null if this is not
      * available or applicable.
-     * 
+     *
      * Providing this information currently does not have any effect on
      * the game and is optional. In the future, the platform may take
      * advantage of this information to improve the evaluation and
      * grading process.
-     * 
+     *
      */
     public String getSchool() {
         return "Mayo";
     }
 
     /**
-     * Invokes the platform to create an instance of the TemplatePlayer class and use it to 
+     * Invokes the platform to create an instance of the TemplatePlayer class and use it to
      * play the game.
-     * 
-     * Note: If you rename or copy this class to a new name, you may have to update this 
+     *
+     * Note: If you rename or copy this class to a new name, you may have to update this
      * method in the new/renamed class to use the correct class name.
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) {
 
-        // The following allows you to run the game from this player class's main 
+        // The following allows you to run the game from this player class's main
         // method versus running from the command line.  To work, the battleship.jar
         // must be included in your environment's classpath.
-        
-        // This QuickStart version lets you select the board using a prompt so you 
+
+        // This QuickStart version lets you select the board using a prompt so you
         // can choose different boards to test your strategy against
         PlatformImpl.onePlayerQuickStart(
         		// This parameter determines which class will be created by the runtime, and used to play the
@@ -194,7 +209,7 @@ public class TemplatePlayer implements Player {
                 // true to show the GUI. This optimizes the GUI so you can observe the play of your Player implementation.
                 true);
 
-        
+
     }
 
 }
